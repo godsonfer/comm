@@ -23,6 +23,9 @@ import { selectCurrentUser } from "./redux/cart/user.reselect";
 import Checkout from "./components/pages/checkout/checkout.component";
 
 class App extends React.Component {
+  state = {
+    loading: true
+  };
   unsusbscribeFromAuth = null;
 
   componentDidMount() {
