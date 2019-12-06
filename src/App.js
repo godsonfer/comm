@@ -10,7 +10,13 @@ import { createStructuredSelector } from "reselect";
 import ShopPage from "./components/pages/shop/shop";
 import Header from "./components/header-component/header";
 import SignInAndSignUp from "./components/pages/sign-in-and-sign-up/sign-in-and-sign-up";
-import { auth, createUserProfileDocument } from "./firebase/firebase.utils";
+import {
+  auth,
+  createUserProfileDocument,
+  addCollectionAndDocuments
+} from "./firebase/firebase.utils";
+
+import { selectCollectionForPreview } from "./redux/shop/shop.selector";
 
 import { setCurrentUser } from "./redux/user-action/user.action";
 import { selectCurrentUser } from "./redux/cart/user.reselect";
@@ -20,20 +26,28 @@ class App extends React.Component {
   unsusbscribeFromAuth = null;
 
   componentDidMount() {
-    const { setCurrentUser } = this.props;
-    this.unsusbscribeFromAuth = auth.onAuthStateChanged(async (userAuth) => {
+    const { setCurrentUser, collectionArray } = this.props;
+    this.unsusbscribeFromAuth = auth.onAuthStateChanged(async userAuth => {
       if (userAuth) {
         const userRef = await createUserProfileDocument(userAuth);
-
-        userRef.onSnapshot((snapShot) => {
+        userRef.onSnapshot(snapShot => {
           setCurrentUser({
             id: snapShot.id,
-            ...snapShot.data(),
+            ...snapShot.data()
           });
         });
       }
 
       setCurrentUser(userAuth);
+      // TODO: this was for entering datas into our firestore database
+
+      // addCollectionAndDocuments(
+      //   "collections",
+      //   collectionArray.map(({ title, items }) => ({
+      //     title,
+      //     items
+      //   }))
+      // );
     });
   }
 
@@ -62,14 +76,13 @@ class App extends React.Component {
   }
 }
 
-const mapDispatchToProps = (dispatch) => ({
-  setCurrentUser: (user) => dispatch(setCurrentUser(user)),
+const mapDispatchToProps = dispatch => ({
+  setCurrentUser: user => dispatch(setCurrentUser(user))
 });
 
 const maspStateToProps = createStructuredSelector({
   currentUser: selectCurrentUser,
+  collectionArray: selectCollectionForPreview
 });
-export default connect(
-  maspStateToProps,
-  mapDispatchToProps,
-)(App);
+
+export default connect(maspStateToProps, mapDispatchToProps)(App);

@@ -27,11 +27,8 @@ const CollectionItem = ({ item, addItem }) => {
   );
 };
 
-const mapDispatchToProps = (dispatch) => ({
-  addItem: (item) => dispatch(addItem(item)),
+const mapDispatchToProps = dispatch => ({
+  addItem: item => dispatch(addItem(item))
 });
 
-export default connect(
-  null,
-  mapDispatchToProps,
-)(CollectionItem);
+export default connect(null, mapDispatchToProps)(CollectionItem);
